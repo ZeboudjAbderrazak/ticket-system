@@ -1,0 +1,63 @@
+<!-- templates/tickets/ticket_detail.html -->
+{% extends 'base.html' %}
+{% block title %}{{ ticket.id }} - {{ ticket.title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="display-6 fw-bold">{{ ticket.id }} - {{ ticket.title }}</h1>
+    <div class="d-flex gap-2">
+        {% if is_admin %}
+        <a href="{% url 'edit_ticket' ticket.id %}" class="btn btn-warning">
+            <i class="bi bi-pencil me-1"></i> Modifier
+        </a>
+        {% endif %}
+        <a href="{% url 'export_ticket_pdf' ticket.id %}" class="btn btn-outline-secondary" target="_blank">
+            <i class="bi bi-file-earmark-pdf me-1"></i> PDF
+        </a>
+        <a href="{% url 'my_tickets' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Retour
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">Détails de la demande</div>
+            <div class="card-body">
+                <p>{{ ticket.description }}</p>
+                <hr>
+                <div class="d-flex align-items-center justify-content-between text-muted small">
+                    <span>Créé par <strong>{{ ticket.created_by.username }}</strong> le {{ ticket.created_at|date:"d M Y à H:i" }}</span>
+                    <span>Mis à jour : {{ ticket.updated_at|timesince }} ago</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">Statut</div>
+            <div class="card-body">
+                {% if ticket.status == 'open' %}
+                    <span class="ticket-status status-open">Ouvert</span>
+                {% elif ticket.status == 'in_progress' %}
+                    <span class="ticket-status status-in-progress">En cours</span>
+                {% else %}
+                    <span class="ticket-status status-resolved">Résolu</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">Priorité</div>
+            <div class="card-body">
+                {% if ticket.priority == 'high' %}
+                    <span class="badge bg-danger fs-6">Urgent</span>
+                {% elif ticket.priority == 'medium' %}
+                    <span class="badge bg-warning text-dark fs-6">Moyen</span>
+                {% else %}
+                    <span class="badge bg-success fs-6">Bas</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

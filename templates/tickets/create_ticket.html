@@ -1,0 +1,42 @@
+<!-- templates/tickets/create_ticket.html -->
+{% extends 'base.html' %}
+{% block title %}Nouveau ticket - Plateforme de Tickets{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <h1 class="auth-title">Nouveau ticket</h1>
+                    <p class="auth-subtitle">Décrivez votre problème ou demande</p>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Objet</label>
+                        <input name="title" class="form-control" required placeholder="Ex: Problème d'imprimante">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description détaillée</label>
+                        <textarea name="description" class="form-control" rows="5" required placeholder="Expliquez clairement..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Priorité</label>
+                        <select name="priority" class="form-control">
+                            <option value="low">Bas</option>
+                            <option value="medium" selected>Moyen</option>
+                            <option value="high">Urgent</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-send me-2"></i> Soumettre le ticket
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary w-100 mt-2">
+                        Annuler
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

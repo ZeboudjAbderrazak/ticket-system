@@ -1,0 +1,236 @@
+<!-- templates/tickets/dashboard.html -->
+{% extends 'base.html' %}
+{% block title %}Tableau de bord - Plateforme de Tickets{% endblock %}
+{% block content %}
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <h1 class="display-6 fw-bold">Bonjour, {{ user.username }} !</h1>
+    <div class="dropdown">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-filter me-1"></i>Filtrer
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#"><i class="bi bi-circle-fill text-success me-2"></i>Résolus</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-circle-fill text-warning me-2"></i>En cours</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-circle-fill text-danger me-2"></i>Urgents</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="quick-actions mb-4">
+    <a href="{% url 'create_ticket' %}" class="action-card" style="text-decoration: none; color: inherit;">
+        <div class="action-icon"><i class="bi bi-plus-circle"></i></div>
+        <h5 class="fw-bold mb-1">Nouveau ticket</h5>
+        <p class="mb-0 text-muted">Créez une nouvelle demande</p>
+    </a>
+    <a href="{% url 'my_tickets' %}" class="action-card" style="text-decoration: none; color: inherit;">
+        <div class="action-icon"><i class="bi bi-clock-history"></i></div>
+        <h5 class="fw-bold mb-1">Mes tickets</h5>
+        <p class="mb-0 text-muted">Suivi de mes demandes</p>
+    </a>
+    <div class="action-card">
+        <div class="action-icon"><i class="bi bi-bell"></i></div>
+        <h5 class="fw-bold mb-1">Notifications</h5>
+        <p class="mb-0 text-muted">Alertes importantes</p>
+    </div>
+    <div class="action-card">
+        <div class="action-icon"><i class="bi bi-graph-up"></i></div>
+        <h5 class="fw-bold mb-1">Statistiques</h5>
+        <p class="mb-0 text-muted">Performance & analyse</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>{% if is_admin %}Tous les tickets{% else %}Mes tickets récents{% endif %}</span>
+                <a href="{% url 'my_tickets' %}" class="text-decoration-none text-primary">Voir tout</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Objet</th>
+                                <th>Statut</th>
+                                <th>Priorité</th>
+                                <th>Dernière mise à jour</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ticket in tickets %}
+                            <tr class="ticket-card">
+                                <td>{{ ticket.id }}</td>
+                                <td>
+                                    {{ ticket.title }}
+                                    {% if is_admin %}
+                                    <span class="text-muted">({{ ticket.created_by.username }})</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if ticket.status == 'open' %}
+                                        <span class="ticket-status status-open">Ouvert</span>
+                                    {% elif ticket.status == 'in_progress' %}
+                                        <span class="ticket-status status-in-progress">En cours</span>
+                                    {% else %}
+                                        <span class="ticket-status status-resolved">Résolu</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if ticket.priority == 'high' %}
+                                        <span class="badge bg-danger">Urgent</span>
+                                    {% elif ticket.priority == 'medium' %}
+                                        <span class="badge bg-warning text-dark">Moyen</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Bas</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ ticket.updated_at|timesince }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center text-muted">Aucun ticket</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-person-circle me-2"></i>Mon profil
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 80px; height: 80px; font-size: 2rem; font-weight: bold;">
+                        {{ user.username|first|upper }}
+                    </div>
+                </div>
+                <h4 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h4>
+                <p class="text-muted mb-3">{{ user.email }}</p>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" disabled>
+                        <i class="bi bi-pencil me-1"></i>Modifier mon profil
+                    </button>
+                    <button class="btn btn-outline-secondary" disabled>
+                        <i class="bi bi-gear me-1"></i>Paramètres
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-bar-chart-line me-2"></i>Statistiques
+            </div>
+            <div class="card-body">
+                <div class="mb-4 text-center">
+                    <div class="display-4 fw-bold text-primary">{{ stats.total }}</div>
+                    <div class="text-muted">Tickets actifs</div>
+                </div>
+                <div class="progress mb-3" style="height: 10px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ stats.resolved_pct }}%"></div>
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: {{ stats.in_progress_pct }}%"></div>
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: {{ stats.open_pct }}%"></div>
+                </div>
+                <div class="d-flex justify-content-between text-muted small">
+                    <span><i class="bi bi-check-circle text-success me-1"></i>{{ stats.resolved_pct }}% Résolus</span>
+                    <span><i class="bi bi-clock text-warning me-1"></i>{{ stats.in_progress_pct }}% En cours</span>
+                    <span><i class="bi bi-exclamation-circle text-danger me-1"></i>{{ stats.open_pct }}% Ouverts</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-bell me-2"></i>Notifications
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 fw-bold">Nouveau ticket soumis</h6>
+                            <small class="text-muted">Il y a 1h</small>
+                        </div>
+                        <p class="mb-1 text-muted">Un nouveau ticket a été créé dans le système.</p>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 fw-bold">Maintenance programmée</h6>
+                            <small class="text-muted">Il y a 1 jour</small>
+                        </div>
+                        <p class="mb-1 text-muted">Le serveur sera en maintenance ce samedi...</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-graph-up me-2"></i>Activité récente
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="fw-bold">Activité cette semaine</span>
+                    <span class="text-primary fw-bold">+24%</span>
+                </div>
+                <canvas id="activityChart" height="200"></canvas>
+                <div class="mt-3 d-flex justify-content-between text-center">
+                    <div>
+                        <div class="fw-bold text-primary">8</div>
+                        <div class="text-muted small">Nouveaux tickets</div>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-success">12</div>
+                        <div class="text-muted small">Tickets résolus</div>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-warning">4</div>
+                        <div class="text-muted small">En attente</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('activityChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+                datasets: [{
+                    label: 'Tickets créés',
+                    data: [5, 3, 7, 4, 8, 2, 4],
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#6366f1',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

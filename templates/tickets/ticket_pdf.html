@@ -1,0 +1,44 @@
+<!-- templates/tickets/ticket_pdf.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .ticket-id { font-size: 24px; font-weight: bold; color: #4f46e5; }
+        .field { margin: 15px 0; }
+        .label { font-weight: bold; color: #555; }
+        .value { margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="ticket-id">{{ ticket.id }}</div>
+        <div>{{ ticket.title }}</div>
+    </div>
+    <div class="field">
+        <span class="label">Statut :</span>
+        <span class="value">{{ ticket.get_status_display }}</span>
+    </div>
+    <div class="field">
+        <span class="label">Priorité :</span>
+        <span class="value">{{ ticket.get_priority_display }}</span>
+    </div>
+    <div class="field">
+        <span class="label">Créé par :</span>
+        <span class="value">{{ ticket.created_by.username }}</span>
+    </div>
+    <div class="field">
+        <span class="label">Date :</span>
+        <span class="value">{{ ticket.created_at|date:"d M Y à H:i" }}</span>
+    </div>
+    <div class="field">
+        <span class="label">Description :</span>
+        <div class="value" style="margin-top: 8px; white-space: pre-wrap;">{{ ticket.description }}</div>
+    </div>
+    <div style="margin-top: 40px; text-align: center; color: #888; font-size: 12px;">
+        Généré par la Plateforme de Tickets le {{ "now"|date:"d/m/Y à H:i" }}
+    </div>
+</body>
+</html>

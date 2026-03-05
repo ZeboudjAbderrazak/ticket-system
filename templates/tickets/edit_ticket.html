@@ -1,0 +1,45 @@
+<!-- templates/tickets/edit_ticket.html -->
+{% extends 'base.html' %}
+{% block title %}Modifier {{ ticket.id }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                Modifier le ticket {{ ticket.id }}
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label>Objet</label>
+                        <input name="title" class="form-control" value="{{ ticket.title }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <textarea name="description" class="form-control" rows="4" required>{{ ticket.description }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label>Statut</label>
+                        <select name="status" class="form-control">
+                            <option value="open" {% if ticket.status == 'open' %}selected{% endif %}>Ouvert</option>
+                            <option value="in_progress" {% if ticket.status == 'in_progress' %}selected{% endif %}>En cours</option>
+                            <option value="resolved" {% if ticket.status == 'resolved' %}selected{% endif %}>Résolu</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Priorité</label>
+                        <select name="priority" class="form-control">
+                            <option value="low" {% if ticket.priority == 'low' %}selected{% endif %}>Bas</option>
+                            <option value="medium" {% if ticket.priority == 'medium' %}selected{% endif %}>Moyen</option>
+                            <option value="high" {% if ticket.priority == 'high' %}selected{% endif %}>Urgent</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                    <a href="{% url 'ticket_detail' ticket.id %}" class="btn btn-secondary ms-2">Annuler</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

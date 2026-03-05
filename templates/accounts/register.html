@@ -1,0 +1,75 @@
+<!-- templates/accounts/register.html -->
+{% extends 'base.html' %}
+{% block title %}Inscription - Plateforme de Tickets{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <h1 class="auth-title">Créer un compte</h1>
+                    <p class="auth-subtitle">Rejoignez notre communauté et gérez vos tickets facilement</p>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_username" class="form-label">Nom d'utilisateur</label>
+                                <div class="position-relative">
+                                    <input type="text" id="id_username" name="username" class="form-control" placeholder="votre_nom" required>
+                                    <i class="bi bi-person-fill input-icon" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gray);"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_email" class="form-label">Adresse email</label>
+                                <div class="position-relative">
+                                    <input type="email" id="id_email" name="email" class="form-control" placeholder="nom@exemple.com" required>
+                                    <i class="bi bi-envelope input-icon" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gray);"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_password1" class="form-label">Mot de passe</label>
+                                <div class="position-relative">
+                                    <input type="password" id="id_password1" name="password1" class="form-control" placeholder="••••••••" required>
+                                    <i class="bi bi-lock input-icon" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gray);"></i>
+                                </div>
+                                <div class="form-text mt-1" style="font-size: 0.85rem; color: var(--gray);">
+                                    Doit contenir au moins 8 caractères
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="id_password2" class="form-label">Confirmation du mot de passe</label>
+                                <div class="position-relative">
+                                    <input type="password" id="id_password2" name="password2" class="form-control" placeholder="••••••••" required>
+                                    <i class="bi bi-lock-fill input-icon" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gray);"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-check mt-3 mb-4">
+                        <input class="form-check-input" type="checkbox" id="terms" required>
+                        <label class="form-check-label" for="terms">
+                            J'accepte les <a href="#" class="text-decoration-none" style="color: var(--primary);">conditions d'utilisation</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-auth btn-primary w-100">
+                        <i class="bi bi-person-plus me-2"></i> Créer mon compte
+                    </button>
+                </form>
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="mb-0">Vous avez déjà un compte ? <a href="{% url 'login' %}" class="text-decoration-none fw-bold" style="color: var(--primary);">Connectez-vous</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
